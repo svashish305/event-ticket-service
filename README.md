@@ -14,6 +14,10 @@ pip install "uvicorn[standard]"
 pip install -r requirements.txt
 # in case of updating dependencies, after updates, run below command to update requirements.txt
 pip freeze > requirements.txt
+# rub db migrate/seed db
+alembic revision --autogenerate -m "initial migration"
+alembic revision -m "custom message for next migration attempt"
+alembic upgrade head
 ```
 
 ## Run Instructions

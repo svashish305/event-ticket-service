@@ -33,14 +33,21 @@ def get_events(db: Session = Depends(get_db)):
 
 @app.post("/reservations/", response_model=schemas.ReservationOut)
 def make_reservation(reservation: schemas.ReservationIn, db: Session = Depends(get_db)):
-    new_reservation = crud.make_reservation(db, reservation)
+    new_reservation = crud.make_reservation(reservation, db)
+    if new_reservation.message:
+        raise HTTPException(status_code=new_reservation.code, detail=new_reservation.message)
     return new_reservation
 
 @app.put("/reservations/{reservation_id}", response_model=schemas.ReservationOut)
 def update_reservation(reservation_id: int, num_tickets: int, db: Session = Depends(get_db)):
-    updated_reservation = crud.update_reservation(db, reservation_id, num_tickets)
+    updated_reservation = crud.update_reservation(reservation_id, num_tickets, db)
+    if updated_reservation.message:
+        raise HTTPException(status_code=updated_reservation.code, detail=updated_reservation.message)
     return updated_reservation
 
-@app.delete("/reservations/{reservation_id}")
+@app.delete("/reservations/{reservation_id}", response_model=schemas.ReservationOut)
 def cancel_reservation(reservation_id: int, db: Session = Depends(get_db)):
-    return crud.cancel_reservation(db, reservation_id)
+    cancelled_reservation = crud.cancel_reservation(reservation_id, db)
+    if cancelled_reservation.message:
+        raise HTTPException(status_code=cancelled_reservation.code, detail=cancelled_reservation.message)
+    return cancelled_reservation

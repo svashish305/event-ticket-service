@@ -12,6 +12,8 @@ class ReservationIn(BaseModel):
     num_tickets: int
 
 class ReservationOut(BaseModel):
-    id: int
-    ticket_id: int
-    num_reserved: int
+    id: int = None
+    ticket_id: int = None
+    num_reserved: int = None
+    message: str = None
+    code: int = None

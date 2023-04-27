@@ -27,9 +27,10 @@ def make_reservation(reservation: schemas.ReservationIn, db: Session):
         ticket.num_available -= reservation.num_tickets
         db.commit()
         db.refresh(new_reservation)
-        return new_reservation
+        return schemas.ReservationOut(id=new_reservation.id, ticket_id=new_reservation.ticket_id, num_reserved=new_reservation.num_reserved)
     else:
-        raise HTTPException(status_code=400, detail="Not enough tickets available")
+        return schemas.ReservationOut(code=400, message="Not enough tickets available")
+
     
 def update_reservation(reservation_id: int, num_tickets: int, db: Session):
     reservation = db.query(models.Reservation).filter(models.Reservation.id == reservation_id).first()
@@ -43,11 +44,11 @@ def update_reservation(reservation_id: int, num_tickets: int, db: Session):
             reservation.num_reserved = num_tickets
             db.commit()
             db.refresh(reservation)
-            return reservation
+            return schemas.ReservationOut(id=reservation.id, ticket_id=reservation.ticket_id, num_reserved=reservation.num_reserved)
         else:
-            raise HTTPException(status_code=400, detail="Not enough tickets available")
+            return schemas.ReservationOut(code=400, message="Not enough tickets available")
     else:
-        raise HTTPException(status_code=404, detail="Reservation not found")
+        return schemas.ReservationOut(code=404, message="Reservation not found")
     
 def cancel_reservation(reservation_id: int, db: Session):
     reservation = db.query(models.Reservation).filter(models.Reservation.id == reservation_id).first()
@@ -58,6 +59,6 @@ def cancel_reservation(reservation_id: int, db: Session):
         ticket.num_available += reservation.num_reserved
         db.delete(reservation)
         db.commit()
-        return {"message": "Reservation cancelled"}
+        return schemas.ReservationOut(code=204, message="Reservation cancelled")
     else:
-        raise HTTPException(status_code=404, detail="Reservation not found")
+        return schemas.ReservationOut(code=404, message="Reservation not found")

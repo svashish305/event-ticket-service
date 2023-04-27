@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 from fastapi import HTTPException
 
-from . import models, schemas
+import models, schemas
 
 def get_events(db: Session):
     events = db.query(models.Event).all()

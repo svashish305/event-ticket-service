@@ -14,7 +14,14 @@ pip install "uvicorn[standard]"
 pip install -r requirements.txt
 # in case of updating dependencies, after updates, run below command to update requirements.txt
 pip freeze > requirements.txt
-# run app
+```
+
+## Run Instructions
+
+```python
+# run postgresql using docker compose
+docker-compose up -d
+# run server
 uvicorn main:app --reload
 ```
 

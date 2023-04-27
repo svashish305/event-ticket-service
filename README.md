@@ -17,3 +17,7 @@ pip freeze > requirements.txt
 # run app
 uvicorn main:app --reload
 ```
+
+## API Documentation
+
+API documentation is available at http://localhost:8000/docs or http://localhost:8000/redoc

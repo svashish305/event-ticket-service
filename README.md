@@ -24,9 +24,9 @@ alembic upgrade head
 
 ```python
 # run postgresql using docker compose
-docker-compose up -d
+docker compose up -d
 # run server
-uvicorn main:app --reload
+uvicorn app.main:app --reload
 ```
 
 ## API Documentation

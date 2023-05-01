@@ -1,8 +1,8 @@
 from datetime import datetime
 from sqlalchemy.orm import Session
-from fastapi import HTTPException
 
-import models, schemas
+from app.api.models import models
+from app.api.schemas import schemas
 
 def get_events(db: Session):
     events = db.query(models.Event).all()

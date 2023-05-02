@@ -1,7 +1,11 @@
+from datetime import datetime
 from sqlalchemy.orm import Session
 
 from app.api.models import models
 from app.api.schemas import schemas
+
+def is_future_event(event_date_time):
+    return event_date_time > datetime.now()
 
 def get_events(db: Session):
     events = db.query(models.Event).all()

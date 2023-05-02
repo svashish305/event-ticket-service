@@ -4,11 +4,12 @@ from sqlalchemy.orm import Session
 
 from app.api.models import models
 from app.api.schemas import schemas
+from .events import is_future_event
 
 def make_reservation(reservation: schemas.ReservationIn, db: Session):
     ticket = db.query(models.Ticket).filter(models.Ticket.id == reservation.ticket_id).first()
     event = db.query(models.Event).filter(models.Event.id == ticket.event_id).first()
-    if ticket.num_available >= reservation.num_tickets and event.date_time > datetime.now():
+    if ticket.num_available >= reservation.num_tickets and is_future_event:
         new_reservation = models.Reservation(ticket_id=reservation.ticket_id, num_reserved=reservation.num_tickets)
         db.add(new_reservation)
         ticket.num_available -= reservation.num_tickets
@@ -23,7 +24,7 @@ def update_reservation(reservation_id: int, num_tickets: int, db: Session):
     reservation = db.query(models.Reservation).filter(models.Reservation.id == reservation_id).first()
     ticket = db.query(models.Ticket).filter(models.Ticket.id == reservation.ticket_id).first()
     event = db.query(models.Event).filter(models.Event.id == ticket.event_id).first()
-    if reservation and event.date_time > datetime.now():
+    if reservation and is_future_event:
         ticket = reservation.ticket
         num_available = ticket.num_available + reservation.num_reserved
         if num_tickets <= num_available:
@@ -41,7 +42,7 @@ def cancel_reservation(reservation_id: int, db: Session):
     reservation = db.query(models.Reservation).filter(models.Reservation.id == reservation_id).first()
     ticket = db.query(models.Ticket).filter(models.Ticket.id == reservation.ticket_id).first()
     event = db.query(models.Event).filter(models.Event.id == ticket.event_id).first()
-    if reservation and event.date_time > datetime.now():
+    if reservation and is_future_event:
         ticket = reservation.ticket
         ticket.num_available += reservation.num_reserved
         db.delete(reservation)

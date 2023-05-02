@@ -1,4 +1,7 @@
 services:
+  app:
+    
+
   db:
     container_name: my-postgres
     image: postgres

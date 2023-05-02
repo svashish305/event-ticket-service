@@ -1,5 +1,5 @@
-from fastapi import APIRouter, Request, Response
-from app.api.v1.routes.endpoints import events, reservations
+from fastapi import APIRouter
+from app.api.controllers import events, reservations
 
 api_router = APIRouter()
 

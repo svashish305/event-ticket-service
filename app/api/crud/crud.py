@@ -1,4 +1,5 @@
 from datetime import datetime
+from fastapi import status
 from sqlalchemy.orm import Session
 
 from app.api.models import models
@@ -29,7 +30,7 @@ def make_reservation(reservation: schemas.ReservationIn, db: Session):
         db.refresh(new_reservation)
         return schemas.ReservationOut(id=new_reservation.id, ticket_id=new_reservation.ticket_id, num_reserved=new_reservation.num_reserved)
     else:
-        return schemas.ReservationOut(code=400, message="Not enough tickets available")
+        return schemas.ReservationOut(code=status.HTTP_400_BAD_REQUEST, message="Not enough tickets available")
 
     
 def update_reservation(reservation_id: int, num_tickets: int, db: Session):
@@ -46,9 +47,9 @@ def update_reservation(reservation_id: int, num_tickets: int, db: Session):
             db.refresh(reservation)
             return schemas.ReservationOut(id=reservation.id, ticket_id=reservation.ticket_id, num_reserved=reservation.num_reserved)
         else:
-            return schemas.ReservationOut(code=400, message="Not enough tickets available")
+            return schemas.ReservationOut(code=status.HTTP_400_BAD_REQUEST, message="Not enough tickets available")
     else:
-        return schemas.ReservationOut(code=404, message="Reservation not found")
+        return schemas.ReservationOut(code=status.HTTP_404_NOT_FOUND, message="Reservation not found")
     
 def cancel_reservation(reservation_id: int, db: Session):
     reservation = db.query(models.Reservation).filter(models.Reservation.id == reservation_id).first()
@@ -59,6 +60,6 @@ def cancel_reservation(reservation_id: int, db: Session):
         ticket.num_available += reservation.num_reserved
         db.delete(reservation)
         db.commit()
-        return schemas.ReservationOut(code=204, message="Reservation cancelled")
+        return schemas.ReservationOut(code=status.HTTP_204_NO_CONTENT, message="Reservation cancelled")
     else:
-        return schemas.ReservationOut(code=404, message="Reservation not found")
+        return schemas.ReservationOut(code=status.HTTP_404_NOT_FOUND, message="Reservation not found")

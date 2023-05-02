@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
 from app.api.schemas import schemas
 from sqlalchemy.orm import Session
 from app.api.dependencies import get_db
@@ -6,7 +6,7 @@ from app.api.crud import crud
 
 router = APIRouter()
 
-@router.post("/", response_model=schemas.ReservationOut)
+@router.post("/", response_model=schemas.ReservationOut, status_code=status.HTTP_201_CREATED)
 def make_reservation(reservation: schemas.ReservationIn, db: Session = Depends(get_db)):
     new_reservation = crud.make_reservation(reservation, db)
     if new_reservation.message:
@@ -20,9 +20,8 @@ def update_reservation(reservation_id: int, num_tickets: int, db: Session = Depe
         raise HTTPException(status_code=updated_reservation.code, detail=updated_reservation.message)
     return updated_reservation
 
-@router.delete("/{reservation_id}", response_model=schemas.ReservationOut)
+@router.delete("/{reservation_id}", status_code=status.HTTP_204_NO_CONTENT)
 def cancel_reservation(reservation_id: int, db: Session = Depends(get_db)):
     cancelled_reservation = crud.cancel_reservation(reservation_id, db)
     if cancelled_reservation.message:
         raise HTTPException(status_code=cancelled_reservation.code, detail=cancelled_reservation.message)
-    return cancelled_reservation

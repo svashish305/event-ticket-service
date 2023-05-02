@@ -25,7 +25,11 @@ alembic upgrade head
 ```python
 # run postgresql using docker compose
 docker compose up -d
-# run server
+# if you face port already in use or permission denied, since docker also uses port 5432, stop docker and run below command
+sudo systemctl stop postgresql
+sudo docker compose up -d
+# run server in separate terminal tab
+source .venv/bin/activate
 uvicorn app.main:app --reload
 ```
 

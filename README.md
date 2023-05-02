@@ -23,14 +23,11 @@ alembic revision -m "custom message for next migration attempt"
 ## Run Instructions
 
 ```python
-# run postgresql using docker compose
+# run fastapi and postgresql using docker compose
 docker compose up -d
 # if you face port already in use or permission denied, since docker also uses port 5432, stop local postgresql and run below command
 sudo systemctl stop postgresql
 sudo docker compose up -d
-# run server in separate terminal tab
-source .venv/bin/activate
-uvicorn app.main:app --reload
 ```
 
 ## API Documentation

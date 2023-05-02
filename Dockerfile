@@ -1,8 +1,9 @@
-FROM tiangolo/uvicorn-gunicorn:python3.10
+FROM python:3.10
 
-LABEL maintainer="Sebastian Ramirez <tiangolo@gmail.com>"
+WORKDIR /app
 
-COPY requirements.txt /tmp/requirements.txt
-RUN pip install --no-cache-dir -r /tmp/requirements.txt
+COPY ./requirements.txt /app/requirements.txt
 
-COPY ./app /app
+RUN pip install --no-cache-dir -r /app/requirements.txt
+
+COPY ./app /app/app

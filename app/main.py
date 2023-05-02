@@ -8,8 +8,8 @@ app = FastAPI(
 )
 
 @app.get("/")
-async def read_root():
-    return {"Hello": "World"}
+async def health_check():
+    return {"status": "up"}
 
 @app.middleware("http")
 async def middleware_wrapper(request: Request, call_next):

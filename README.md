@@ -23,11 +23,14 @@ alembic revision -m "custom message for next migration attempt"
 ## Run Instructions
 
 ```python
-# run fastapi and postgresql using docker compose
-docker compose up -d
+# build docker image of fastapi and postgresql using docker compose
+docker compose up --build
 # if you face port already in use or permission denied, since docker also uses port 5432, stop local postgresql and run below command
 sudo systemctl stop postgresql
+# run both app and db in detached mode
 sudo docker compose up -d
+# check logs
+sudo docker compose logs
 ```
 
 ## API Documentation

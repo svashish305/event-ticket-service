@@ -1,6 +1,6 @@
 # Event Ticket Service
 
-A project to demonstrate event ticketing system built using FastApi and PostgreSQL.
+A project to demonstrate event ticketing system built using FastApi and PostgreSQL. It uses SQLAlchemy as ORM layer and alembic for running database migrations. Deployed locally using docker.
 
 ## Setup Instructions
 

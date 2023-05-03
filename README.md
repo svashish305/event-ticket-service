@@ -2,7 +2,7 @@
 
 A project to demonstrate event ticketing system built using FastApi and PostgreSQL. It uses SQLAlchemy as ORM layer and alembic for running database migrations. Deployed locally using docker.
 
-## Setup Instructions
+## (Optional) Setup Instructions
 
 ```python
 python3 -m venv .venv

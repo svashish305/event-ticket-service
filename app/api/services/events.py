@@ -7,7 +7,7 @@ from app.api.schemas import schemas
 def is_future_event(event_date_time):
     return event_date_time > datetime.now()
 
-def get_events(db: Session):
+async def get_events(db: Session):
     events_out = []
     try:
         events = db.query(models.Event).all()

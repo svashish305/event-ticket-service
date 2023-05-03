@@ -5,7 +5,7 @@ from app.api.models import models
 from app.api.schemas import schemas
 from .events import is_future_event
 
-def make_reservation(reservation: schemas.ReservationIn, db: Session):
+async def make_reservation(reservation: schemas.ReservationIn, db: Session):
     try:
         db.begin()
         ticket = db.query(models.Ticket).filter(models.Ticket.id == reservation.ticket_id).first()
@@ -25,7 +25,7 @@ def make_reservation(reservation: schemas.ReservationIn, db: Session):
         return schemas.ReservationOut(code=status.HTTP_500_INTERNAL_SERVER_ERROR, message="Unable to make reservation") 
 
 
-def update_reservation(reservation_id: int, num_tickets: int, db: Session):
+async def update_reservation(reservation_id: int, num_tickets: int, db: Session):
     try:
         db.begin()
         reservation = db.query(models.Reservation).filter(models.Reservation.id == reservation_id).first()
@@ -50,7 +50,7 @@ def update_reservation(reservation_id: int, num_tickets: int, db: Session):
         return schemas.ReservationOut(code=status.HTTP_500_INTERNAL_SERVER_ERROR, message="Unable to update reservation")
     
 
-def cancel_reservation(reservation_id: int, db: Session):
+async def cancel_reservation(reservation_id: int, db: Session):
     try:
         db.begin()
         reservation = db.query(models.Reservation).filter(models.Reservation.id == reservation_id).first()

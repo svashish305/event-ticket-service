@@ -62,7 +62,6 @@ async def update_reservation(reservation_id: int, num_tickets: int, operation: s
                 db.rollback()
     except Exception as e:
         print("Unable to update reservation due to: ", e)
-        db.rollback()
         return schemas.ReservationOut(code=status.HTTP_500_INTERNAL_SERVER_ERROR, message="Unable to update reservation")
     
 
@@ -87,6 +86,5 @@ async def cancel_reservation(reservation_id: int, db: Session):
                 db.rollback()
     except Exception as e:
         print("Unable to cancel reservation due to: ", e)
-        db.rollback()
         return schemas.ReservationOut(code=status.HTTP_500_INTERNAL_SERVER_ERROR, message="Unable to cancel reservation")
     

@@ -5,9 +5,9 @@ A project to demonstrate event ticketing system built using FastApi and PostgreS
 ## Run Instructions
 
 ```python
-# build docker image of fastapi and postgresql using docker compose
+# (first time only) build docker image of fastapi and postgresql using docker compose
 docker compose up --build
-# if you face port already in use or permission denied, since docker also uses port 5432, stop local postgresql and run below command
+# (optional) if you face port already in use or permission denied, since docker also uses port 5432, stop local postgresql and run below command
 sudo systemctl stop postgresql
 # run both app and db in detached mode
 sudo docker compose up -d
@@ -22,6 +22,8 @@ python3 -m venv .venv
 source .venv/bin/activate
 # install all dependencies
 pip install -r requirements.txt
+# run db in postgresql docker container
+sudo docker compose up db
 # (optional) set initial migration to create tables (first time only)
 alembic init alembic
 alembic revision --autogenerate -m "initial migration"
@@ -43,3 +45,5 @@ uvicorn app.main:app --reload
 
 API documentation is available at [OpenAPI](http://localhost:8000/docs) or [Redoc](http://localhost:8000/redoc)
 Use this to refer to API endpoints and their request/response formats, to test them using OpenAPI UI or Postman or any other API Client tool.
+
+P.S. For managing reservations, there are 2 APIs, 1 to alter number of tickets reserved and other to cancel reservation. For update reservation API there is a operation enum in request body, that takes values 'increase number of tickets' or 'decrease number of tickets' respectively.

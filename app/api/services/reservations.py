@@ -42,13 +42,14 @@ async def update_reservation(reservation_id: int, num_tickets: int, operation: s
         if event.date_time and is_past_event(event.date_time):
             return schemas.ReservationOut(code=status.HTTP_400_BAD_REQUEST, message="Event has already passed")
         if operation == schemas.ReservationOperation.INCREMENT:
+            if num_tickets > event.num_available:
+                return schemas.ReservationOut(code=status.HTTP_400_BAD_REQUEST, message="Not enough tickets available")
             updated_num_tickets = reservation.num_reserved + num_tickets
         elif operation == schemas.ReservationOperation.DECREMENT:
+            if num_tickets > reservation.num_reserved:
+                return schemas.ReservationOut(code=status.HTTP_400_BAD_REQUEST, message="Number of tickets must be less than original number of tickets")
             updated_num_tickets = reservation.num_reserved - num_tickets
-        if updated_num_tickets <= 0:
-            return schemas.ReservationOut(code=status.HTTP_400_BAD_REQUEST, message="Number of tickets must be greater than 0")
-        if updated_num_tickets > event.num_available:
-            return schemas.ReservationOut(code=status.HTTP_400_BAD_REQUEST, message="Not enough tickets available")
+        
         updated_num_available = event.num_available + reservation.num_reserved - updated_num_tickets
         reservation.num_reserved = updated_num_tickets
         event.num_available = updated_num_available

@@ -10,7 +10,7 @@ def is_past_event(event_date_time):
 async def get_events(db: Session):
     events = []
     try:
-        all_events = db.query(models.Event).all() or []
+        all_events = db.query(models.Event).order_by(models.Event.id.asc()).all() or []
         events = [
             schemas.EventOut(
                 id=event.id, 

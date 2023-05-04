@@ -40,5 +40,5 @@ uvicorn app.main:app --reload
 
 ## API Documentation
 
-API documentation is available at http://localhost:8000/docs or http://localhost:8000/redoc
+API documentation is available at [OpenAPI](http://localhost:8000/docs) or [Redoc](http://localhost:8000/redoc)
 Use this to refer to API endpoints and their request/response formats, to test them using OpenAPI UI or Postman or any other API Client tool.

@@ -11,21 +11,13 @@ class Event(Base):
     name = Column(String)
     description = Column(String)
     date_time = Column(DateTime)
-    tickets = relationship("Ticket", back_populates="event")
-
-class Ticket(Base):
-    __tablename__ = "tickets"
-
-    id = Column(Integer, primary_key=True, index=True)
-    event_id = Column(Integer, ForeignKey("events.id"))
-    event = relationship("Event", back_populates="tickets")
+    reservations = relationship("Reservation", back_populates="event")
     num_available = Column(Integer)
-    reservations = relationship("Reservation", back_populates="ticket")
 
 class Reservation(Base):
     __tablename__ = "reservations"
 
     id = Column(Integer, primary_key=True, index=True)
-    ticket_id = Column(Integer, ForeignKey("tickets.id"))
-    ticket = relationship("Ticket", back_populates="reservations")
+    event_id = Column(Integer, ForeignKey("events.id"))
+    event = relationship("Event", back_populates="reservations")
     num_reserved = Column(Integer)

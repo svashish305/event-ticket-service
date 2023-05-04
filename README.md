@@ -18,6 +18,8 @@ alembic upgrade head
 pip freeze > requirements.txt
 # (optional) after any model schema change, run below command with proper message to create another migration
 alembic revision -m "custom message for next migration attempt"
+# (optional) run server locally
+uvicorn app.main:app --reload
 ```
 
 ## Run Instructions

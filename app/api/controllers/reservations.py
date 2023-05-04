@@ -14,8 +14,8 @@ async def make_reservation(reservation: schemas.ReservationIn, db: Session = Dep
     return new_reservation
 
 @router.put("/{reservation_id}", response_model=schemas.ReservationOut)
-async def update_reservation(reservation_id: int, num_tickets: int, db: Session = Depends(get_db)):
-    updated_reservation = await reservations.update_reservation(reservation_id, num_tickets, db)
+async def update_reservation(reservation_id: int, request: schemas.ReservationUpdate, db: Session = Depends(get_db)):
+    updated_reservation = await reservations.update_reservation(reservation_id, request.num_tickets, request.operation, db)
     if updated_reservation.message:
         raise HTTPException(status_code=updated_reservation.code, detail=updated_reservation.message)
     return updated_reservation

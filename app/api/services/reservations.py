@@ -31,60 +31,54 @@ async def make_reservation(reservation: schemas.ReservationIn, db: Session):
 
 async def update_reservation(reservation_id: int, num_tickets: int, operation: str, db: Session):
     try:
-        while True:
-            try:
-                if num_tickets <= 0:
-                    return schemas.ReservationOut(code=status.HTTP_400_BAD_REQUEST, message="Number of tickets must be greater than 0")
-                db.begin()
-                reservation = db.query(models.Reservation).filter(models.Reservation.id == reservation_id).first() or None
-                if not reservation:
-                    return schemas.ReservationOut(code=status.HTTP_404_NOT_FOUND, message="Reservation not found")
-                event = reservation.event or None
-                if not event:
-                    return schemas.ReservationOut(code=status.HTTP_404_NOT_FOUND, message="Event not found")
-                if event.date_time and is_past_event(event.date_time):
-                    return schemas.ReservationOut(code=status.HTTP_400_BAD_REQUEST, message="Event has already passed")
-                if operation == schemas.ReservationOperation.INCREMENT:
-                    if num_tickets > event.num_available:
-                        return schemas.ReservationOut(code=status.HTTP_400_BAD_REQUEST, message="Not enough tickets available")
-                    updated_num_tickets = reservation.num_reserved + num_tickets
-                elif operation == schemas.ReservationOperation.DECREMENT:
-                    if num_tickets > reservation.num_reserved:
-                        return schemas.ReservationOut(code=status.HTTP_400_BAD_REQUEST, message="Number of tickets must be less than original number of tickets")
-                    updated_num_tickets = reservation.num_reserved - num_tickets
-                
-                updated_num_available = event.num_available + reservation.num_reserved - updated_num_tickets
-                reservation.num_reserved = updated_num_tickets
-                event.num_available = updated_num_available
-                db.commit()
-                return schemas.ReservationOut(id=reservation.id, event_id=reservation.event_id, num_reserved=reservation.num_reserved)
-            except IntegrityError:
-                db.rollback()
-    except Exception as e:
+        if num_tickets <= 0:
+            return schemas.ReservationOut(code=status.HTTP_400_BAD_REQUEST, message="Number of tickets must be greater than 0")
+        db.begin()
+        reservation = db.query(models.Reservation).filter(models.Reservation.id == reservation_id).first() or None
+        if not reservation:
+            return schemas.ReservationOut(code=status.HTTP_404_NOT_FOUND, message="Reservation not found")
+        event = reservation.event or None
+        if not event:
+            return schemas.ReservationOut(code=status.HTTP_404_NOT_FOUND, message="Event not found")
+        if event.date_time and is_past_event(event.date_time):
+            return schemas.ReservationOut(code=status.HTTP_400_BAD_REQUEST, message="Event has already passed")
+        if operation == schemas.ReservationOperation.INCREMENT:
+            if num_tickets > event.num_available:
+                return schemas.ReservationOut(code=status.HTTP_400_BAD_REQUEST, message="Not enough tickets available")
+            updated_num_tickets = reservation.num_reserved + num_tickets
+        elif operation == schemas.ReservationOperation.DECREMENT:
+            if num_tickets > reservation.num_reserved:
+                return schemas.ReservationOut(code=status.HTTP_400_BAD_REQUEST, message="Number of tickets must be less than original number of tickets")
+            updated_num_tickets = reservation.num_reserved - num_tickets
+        
+        updated_num_available = event.num_available + reservation.num_reserved - updated_num_tickets
+        reservation.num_reserved = updated_num_tickets
+        event.num_available = updated_num_available
+        db.commit()
+        return schemas.ReservationOut(id=reservation.id, event_id=reservation.event_id, num_reserved=reservation.num_reserved)
+    except (IntegrityError, Exception) as e:
+        db.rollback()
         print("Unable to update reservation due to: ", e)
         return schemas.ReservationOut(code=status.HTTP_500_INTERNAL_SERVER_ERROR, message="Unable to update reservation")
     
 
 async def cancel_reservation(reservation_id: int, db: Session):
     try:
-        while True:
-            try:
-                db.begin()
-                reservation = db.query(models.Reservation).filter(models.Reservation.id == reservation_id).first() or None
-                if not reservation:
-                    return schemas.ReservationOut(code=status.HTTP_404_NOT_FOUND, message="Reservation not found")
-                event = reservation.event or None
-                if not event:
-                    return schemas.ReservationOut(code=status.HTTP_404_NOT_FOUND, message="Event not found")
-                if event.date_time and is_past_event(event.date_time):
-                    return schemas.ReservationOut(code=status.HTTP_400_BAD_REQUEST, message="Event has already passed")
-                event.num_available += reservation.num_reserved
-                db.delete(reservation)
-                db.commit()
-                return schemas.ReservationOut(code=status.HTTP_204_NO_CONTENT, message="Reservation cancelled")
-            except IntegrityError:
-                db.rollback()
-    except Exception as e:
+        db.begin()
+        reservation = db.query(models.Reservation).filter(models.Reservation.id == reservation_id).first() or None
+        if not reservation:
+            return schemas.ReservationOut(code=status.HTTP_404_NOT_FOUND, message="Reservation not found")
+        event = reservation.event or None
+        if not event:
+            return schemas.ReservationOut(code=status.HTTP_404_NOT_FOUND, message="Event not found")
+        if event.date_time and is_past_event(event.date_time):
+            return schemas.ReservationOut(code=status.HTTP_400_BAD_REQUEST, message="Event has already passed")
+        event.num_available += reservation.num_reserved
+        db.delete(reservation)
+        db.commit()
+        return schemas.ReservationOut(code=status.HTTP_204_NO_CONTENT, message="Reservation cancelled")
+    except (IntegrityError, Exception) as e:
+        db.rollback()
         print("Unable to cancel reservation due to: ", e)
         return schemas.ReservationOut(code=status.HTTP_500_INTERNAL_SERVER_ERROR, message="Unable to cancel reservation")
     
